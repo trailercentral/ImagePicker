@@ -116,9 +116,6 @@ public class ImagePicker extends CordovaPlugin {
                 new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
                 PERMISSION_REQUEST_CODE);
         }
-        // This method executes async and we seem to have no known way to receive the result
-        // (that's why these methods were later added to Cordova), so simply returning ok now.
-        callbackContext.success();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -155,19 +152,26 @@ public class ImagePicker extends CordovaPlugin {
         this.callbackContext = callbackContext;
     }
 
-/*
-    @Override
+    /**
+     * Handle Receiving Request From Asking for Permission
+     * 
+     * Borrowed From https://github.com/lh4111/ImagePicker/blob/master/src/android/com/synconset/ImagePicker/ImagePicker.java
+     * 
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     * @throws JSONException 
+     */
     public void onRequestPermissionResult(int requestCode,
                                           String[] permissions,
                                           int[] grantResults) throws JSONException {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                callbackContext.success();
 
-        // For now we just have one permission, so things can be kept simple...
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            cordova.startActivityForResult(this, imagePickerIntent, 0);
-        } else {
-            // Tell the JS layer that something went wrong...
-            callbackContext.error("Permission denied");
+            } else {
+                callbackContext.error("Permission denied");
+            }
         }
     }
-*/
 }
