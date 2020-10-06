@@ -104,17 +104,16 @@ public class ImagePicker extends CordovaPlugin {
 
     @SuppressLint("InlinedApi")
     private boolean hasReadPermission() {
-        return Build.VERSION.SDK_INT < 23 ||
-            PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this.cordova.getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        return Build.VERSION.SDK_INT < 23 || this.cordova.hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     @SuppressLint("InlinedApi")
     private void requestReadPermission() {
         if (!hasReadPermission()) {
-            ActivityCompat.requestPermissions(
-                this.cordova.getActivity(),
-                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
-                PERMISSION_REQUEST_CODE);
+            this.cordova.requestPermission(
+                    this,
+                    PERMISSION_REQUEST_CODE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
         }
     }
 
